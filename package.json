@@ -21,7 +21,9 @@
     "lint:check": "eslint --max-warnings 0 'src/**/**.ts'",
     "format": "prettier \"src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "format:check": "prettier \"src/**/*.ts\" --ignore-path ./.prettierignore --check",
-    "publish": "npm run clean && npm run build && npm publish"
+    "prepublish": "npm run lint:check && npm run format:check && npm run clean && npm run build && npm run test",
+    "publish": "npm publish",
+    "release": "npm run prepublish && npm run publish"
   },
   "devDependencies": {
     "@nestjs/common": "^10.3.3",
