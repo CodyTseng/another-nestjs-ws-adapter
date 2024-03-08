@@ -1,6 +1,6 @@
 # Another NestJS WS Adapter
 
-An adapter modified based on the official `WsAdapter`.
+An adapter modified based on the official [`WsAdapter`](https://docs.nestjs.com/websockets/adapter#ws-library).
 
 ## Differences from the official `WsAdapter`
 
@@ -28,6 +28,17 @@ wsAdapter.setMessagePreprocessor((message: any) => {
 
 app.useWebSocketAdapter(wsAdapter);
 ```
+
+## API
+
+### `setMessagePreprocessor`
+
+```typescript
+type MessagePreprocessor = (message: any, client: WebSocket) => { event: string, data: any } | void;
+setMessagePreprocessor(preprocessor: MessagePreprocessor): void;
+```
+
+Set the message pre-processor. The pre-processor will be called before finding the handler. If the pre-processor returns `void`, the message will be ignored. Otherwise, the message will be processed by the pre-processor and the result should be in the format of `{ event: string, data: any }`. The `client` parameter is the WebSocket client that sends the message.
 
 ## License
 

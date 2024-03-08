@@ -266,6 +266,26 @@ describe('WebSocketGateway (WsAdapter)', () => {
     );
   });
 
+  it('should respond during the message preprocessor', async () => {
+    const preprocessor = (_, client) => {
+      client.send(JSON.stringify({ test: 'test' }));
+    };
+    app = await createNestApp([ServerGateway], preprocessor);
+    await app.listen(3000);
+
+    ws = new WebSocket('ws://localhost:3000');
+    await new Promise(resolve => ws.on('open', resolve));
+
+    ws.send(JSON.stringify({}));
+    await new Promise<void>(resolve =>
+      ws.on('message', data => {
+        expect(JSON.parse(data).test).toEqual('test');
+        ws.close();
+        resolve();
+      }),
+    );
+  });
+
   afterEach(async function () {
     await app.close();
   });

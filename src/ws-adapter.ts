@@ -10,7 +10,10 @@ type HttpServerRegistryKey = number;
 type HttpServerRegistryEntry = any;
 type WsServerRegistryKey = number;
 type WsServerRegistryEntry = Map<string, WebSocketServer>;
-type MessagePreprocessor = (message: any) => { event: string; data: any };
+type MessagePreprocessor = (
+  message: any,
+  client: WebSocket,
+) => { event: string; data: any } | void;
 
 const UNDERLYING_HTTP_SERVER_PORT = 0;
 
@@ -40,10 +43,7 @@ export class WsAdapter extends AbstractWsAdapter {
     WsServerRegistryEntry
   >();
 
-  protected messagePreprocessor: MessagePreprocessor = (message: any) => ({
-    event: message.event,
-    data: message.data,
-  });
+  protected messagePreprocessor: MessagePreprocessor = message => message;
 
   constructor(appOrHttpServer?: INestApplicationContext | any) {
     super(appOrHttpServer);
@@ -114,7 +114,7 @@ export class WsAdapter extends AbstractWsAdapter {
     const close$ = fromEvent(client, 'close').pipe(share(), first());
     const source$ = fromEvent(client, 'message').pipe(
       mergeMap(data =>
-        this.bindMessageHandler(data, handlersMap, transform).pipe(
+        this.bindMessageHandler(client, data, handlersMap, transform).pipe(
           filter(result => !isNil(result)),
         ),
       ),
@@ -130,21 +130,24 @@ export class WsAdapter extends AbstractWsAdapter {
   }
 
   public bindMessageHandler(
+    client: WebSocket,
     buffer: any,
     handlersMap: Map<string, MessageMappingProperties>,
     transform: (data: any) => Observable<any>,
   ): Observable<any> {
     try {
-      const message = JSON.parse(buffer.data);
-      const { event, data } = this.messagePreprocessor(message);
-      const messageHandler = handlersMap.get(event);
+      const message = this.messagePreprocessor(JSON.parse(buffer.data), client);
+      if (!message) {
+        return EMPTY;
+      }
+      const messageHandler = handlersMap.get(message.event);
 
       if (!messageHandler) {
         return EMPTY;
       }
 
       const { callback } = messageHandler;
-      return transform(callback(data, event));
+      return transform(callback(message.data, message.event));
     } catch {
       return EMPTY;
     }
