@@ -34,8 +34,7 @@
     "format": "prettier \"src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "format:check": "prettier \"src/**/*.ts\" --ignore-path ./.prettierignore --check",
     "prepublish": "npm run lint:check && npm run format:check && npm run clean && npm run build && npm run test",
-    "publish": "npm publish",
-    "release": "npm run prepublish && npm run publish"
+    "publish": "npm publish"
   },
   "devDependencies": {
     "@nestjs/common": "^10.3.3",
