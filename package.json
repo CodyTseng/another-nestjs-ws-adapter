@@ -4,6 +4,8 @@
   "description": "another nestjs ws adapter",
   "author": "codytseng",
   "license": "MIT",
+  "keywords": ["nestjs", "websockets", "ws", "adapter"],
+  "tags": ["nestjs", "websockets", "ws", "adapter"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
