@@ -1,11 +1,21 @@
 {
   "name": "another-nestjs-ws-adapter",
-  "version": "10.0.0",
+  "version": "10.1.0",
   "description": "another nestjs ws adapter",
   "author": "codytseng",
   "license": "MIT",
-  "keywords": ["nestjs", "websockets", "ws", "adapter"],
-  "tags": ["nestjs", "websockets", "ws", "adapter"],
+  "keywords": [
+    "nestjs",
+    "websockets",
+    "ws",
+    "adapter"
+  ],
+  "tags": [
+    "nestjs",
+    "websockets",
+    "ws",
+    "adapter"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
