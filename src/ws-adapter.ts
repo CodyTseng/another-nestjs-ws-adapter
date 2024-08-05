@@ -165,6 +165,16 @@ export class WsAdapter extends AbstractWsAdapter {
     client.on('close', callback);
   }
 
+  public async close(server: WebSocketServer) {
+    const closeEventSignal = new Promise((resolve, reject) =>
+      server.close(err => (err ? reject(err) : resolve(undefined))),
+    );
+    for (const ws of server.clients) {
+      ws.terminate();
+    }
+    await closeEventSignal;
+  }
+
   public async dispose() {
     const closeEventSignals = Array.from(this.httpServersRegistry)
       .filter(([port]) => port !== UNDERLYING_HTTP_SERVER_PORT)
